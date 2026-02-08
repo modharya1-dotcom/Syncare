@@ -73,7 +73,7 @@ const Login = () => {
                 border: '1px solid white'
             }}>
                 <div style={{ textAlign: 'center' }}>
-                    <h2 style={{ fontSize: '3.5rem', fontWeight: 900, color: 'var(--primary)', marginBottom: '10px' }}>Syncare</h2>
+                    <h2 style={{ fontSize: '3.5rem', fontWeight: 900, color: 'var(--primary)', marginBottom: '10px' }}>SynCare</h2>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>Welcome back to your care space.</p>
                 </div>
 
@@ -149,7 +149,7 @@ const Login = () => {
 
                 <div style={{ textAlign: 'center', margin: '10px 0' }}>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                        Don't have an account? <span onClick={() => navigate('/role-selection')} style={{ color: 'var(--primary)', cursor: 'pointer', fontWeight: 700 }}>Join Syncare</span>
+                        Don't have an account? <span onClick={() => navigate('/role-selection')} style={{ color: 'var(--primary)', cursor: 'pointer', fontWeight: 700 }}>Join SynCare</span>
                     </p>
                 </div>
 
