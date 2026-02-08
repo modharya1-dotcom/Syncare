@@ -4,7 +4,6 @@ import LandingPage from './pages/Landing/LandingPage';
 import Login from './pages/Auth/Login';
 import SignUp from './pages/Auth/SignUp';
 import RoleSelection from './pages/Auth/RoleSelection';
-import DoctorSetup from './pages/Doctor/DoctorSetup';
 import DoctorDashboard from './pages/Doctor/Dashboard';
 import PatientDashboard from './pages/Patient/Dashboard';
 import FamilyDashboard from './pages/Family/Dashboard';
@@ -17,7 +16,6 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/role-selection" element={<RoleSelection />} />
-                <Route path="/doctor/setup" element={<DoctorSetup />} />
                 <Route path="/doctor/*" element={<DoctorDashboard />} />
                 <Route path="/patient/*" element={<PatientDashboard />} />
                 <Route path="/family/*" element={<FamilyDashboard />} />
