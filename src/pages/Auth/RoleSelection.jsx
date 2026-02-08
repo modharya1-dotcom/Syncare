@@ -50,7 +50,7 @@ const RoleSelection = () => {
             </div>
             <h3 style={{ color: 'var(--text-main)', fontSize: '1.4rem', fontWeight: 700 }}>{title}</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', textAlign: 'center' }}>
-                Join the Syncare community as a {title.toLowerCase()}.
+                Join the SynCare community as a {title.toLowerCase()}.
             </p>
         </div>
     );
@@ -83,7 +83,7 @@ const RoleSelection = () => {
                     maxWidth: '600px',
                     margin: '0 auto',
                     fontWeight: 500
-                }}>Tailoring the Syncare experience to your specific needs.</p>
+                }}>Tailoring the SynCare experience to your specific needs.</p>
             </div>
 
             <div style={{
