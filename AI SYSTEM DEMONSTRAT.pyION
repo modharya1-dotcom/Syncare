@@ -1,0 +1,165 @@
+"""
+SUHASINI DEMONSTRATION
+Runs complete system demo showing all three interfaces
+"""
+from datetime import datetime
+import json
+
+class SuhasiniDemo:
+    def __init__(self):
+        self.patient_name = "Suhasini"
+        self.family_member = "Pankaj"
+   def run_complete_demo(self):
+        """Runs full system demonstration"""
+        
+        print("=" * 70)
+        print("COMPLETE ALZHEIMER'S AI SYSTEM DEMONSTRATION")
+        print("=" * 70)       
+  
+        # PART 1: Patient Interface
+        self.demo_patient_interface()
+        
+        # PART 2: Family Interface
+        self.demo_family_interface()
+        
+        # PART 3: Doctor Interface
+        self.demo_doctor_interface()
+    
+    def demo_patient_interface(self):
+        """Demonstrates patient voice interactions"""
+        print("\n" + "=" * 70)
+        print("1. PATIENT INTERFACE (Voice-Only)")
+        print("=" * 70)
+      
+        # PART 1: Patient Interface
+        self.demo_patient_interface()
+        
+        # PART 2: Family Interface
+        self.demo_family_interface()
+        
+        # PART 3: Doctor Interface
+        self.demo_doctor_interface()
+    
+    def demo_patient_interface(self):
+        """Demonstrates patient voice interactions"""
+        print("\n" + "=" * 70)
+        print("1. PATIENT INTERFACE (Voice-Only)")
+        print("=" * 70)
+     
+        # Morning interaction
+        print("\n[8:00 AM - AI INITIATES CONVERSATION]")
+        print(f"AI: Good morning, {self.patient_name}. {self.family_member} wanted me to remind you - your tablets are ready.")
+        
+        print(f"\n[PATIENT SPEAKS]: Where is {self.family_member}? I need to talk to him.")
+        
+        print(f"\n[AI RESPONDS]: {self.family_member} is safe. He wanted your guidance - what advice should I give him?")
+        
+        print("\n[ALERT FAMILY?]: False")
+        
+        print("\n[LOG TO DOCTOR]:", json.dumps({
+            "timestamp": "2026-02-07T08:00:00",
+            "state": "stable",
+            "triggers": ["pankaj_safety"]
+        }, indent=2))
+        
+        # Sundowning interaction
+        print(f"\n[4:00 PM - PATIENT SPEAKS]: Someone stole money from my Solapur house!")
+        
+        print("\n[AI DETECTS]: Sundowning + Money anxiety")
+        
+        print(f"\n[AI RESPONDS]: {self.patient_name}, you're right to keep track. You worked hard for your two houses in Solapur. Let's make sure everything is documented - tell me about your Shivajinagar property.")
+    
+    def demo_family_interface(self):
+        """Demonstrates family dashboard"""
+        print("\n" + "=" * 70)
+        print(f"2. FAMILY INTERFACE (What {self.family_member} Sees)")
+        print("=" * 70)
+        
+        print(f"\nPATIENT: {self.patient_name}")
+        print("STATUS: confused")
+        print("ACTIVITY: Looking at old photos")
+        
+        print("\nTODAY'S SUMMARY:")
+        print("  Meals: 2/3")
+        print("  Medications: 3/4")
+        print("  Episodes: 1")
+        
+        print("\nALERTS:")
+        print(f"  • She's been asking about {self.family_member} - a quick call would help")
+        
+        print("\n💙 She had some confusion but AI helped her through it.")
+      
+    def demo_doctor_interface(self):
+        """Demonstrates doctor clinical dashboard"""
+        print("\n" + "=" * 70)
+        print("3. DOCTOR INTERFACE (Clinical Dashboard)")
+        print("=" * 70)
+        
+        # Calendar view
+        print("\n📅 CALENDAR VIEW (February 7, 2026):")
+        calendar_data = {
+            "date": "February 07, 2026",
+            "quick_stats": {
+                "overall_state": "STABLE",
+                "episodes": 0
+            },
+            "timeline": [
+                {"time": "08:15", "state": "stable", "triggers": []},
+                {"time": "16:00", "state": "sundowning", "triggers": ["money_anxiety"]},
+                {"time": "18:00", "state": "stable", "triggers": []}
+            ],
+            "ai_narrative": "Patient experienced 3 interactions with varying cognitive states."
+        }
+        print(json.dumps(calendar_data, indent=2))
+        
+        # Pattern analysis
+        print("\n🧠 AI PATTERN ANALYSIS (This Week):")
+        pattern_data = {
+            "week_summary": "Pattern analysis for past 7 days",
+            "emerging_patterns": [
+                {
+                    "pattern": "Sister obsession increased when Pankaj contact decreased",
+                    "clinical_significance": "Sister is displacement for Pankaj absence",
+                    "recommendation": "Increase Pankaj contact to 5x/week"
+                }
+            ],
+            "medication_efficacy": "Olanzapine effective until 4 PM - consider split dosing",
+            "treatment_recommendations": [
+                "Split Olanzapine dose",
+                "Address food refusal with maternal framing"
+            ]
+        }
+        print(json.dumps(pattern_data, indent=2))
+        
+        # Video analysis
+        print("\n🎥 EPISODE VIDEO ANALYSIS:")
+        video_analysis = {
+            "episode_timestamp": "2026-02-07T17:15:00",
+            "trigger_identification": {
+                "immediate_trigger": "Novel stimulus (doorbell)",
+                "underlying_cause": "Sundown vulnerability window"
+            },
+            "behavioral_markers": {
+                "speech_pattern": "Marathi childhood phrases",
+                "physical_signs": ["Hand-wringing", "Pacing"]
+            },
+            "de_escalation_analysis": {
+                "what_worked": "Mentioning Vaishampa Hospital",
+                "why_it_worked": "Activated preserved identity memory"
+            },
+            "recommendations": [
+                "Create career memory box with hospital ID",
+                "Use identity-anchoring phrases during episodes"
+            ]
+        }
+        print(json.dumps(video_analysis, indent=2))
+        
+        # Doctor chat
+        print("\n💬 DOCTOR CHATS WITH AI:")
+        print("Doctor: Why is she obsessed with her sister suddenly?")
+        print("AI: I can help analyze that. Please provide more details.")
+
+
+if __name__ == '__main__':
+    demo = SuhasiniDemo()
+    demo.run_complete_demo()
