@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Stethoscope, User, Heart } from 'lucide-react';
 
+
 const RoleSelection = () => {
     const navigate = useNavigate();
 
@@ -9,26 +10,37 @@ const RoleSelection = () => {
         <div
             onClick={() => navigate(path)}
             style={{
-                background: '#ffffffff',
-                padding: '30px',
-                borderRadius: '20px',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.05)',
+                background: 'rgba(255, 255, 255, 0.95)',
+                padding: '40px 30px',
+                borderRadius: '32px',
+                boxShadow: 'var(--shadow-md)',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '15px',
-                width: '250px',
-                transition: 'transform 0.2s',
+                gap: '20px',
+                width: '100%',
+                maxWidth: '280px',
+                transition: 'var(--transition)',
+                border: '1px solid rgba(255, 255, 255, 0.6)',
+                zIndex: 10
             }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-10px)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+                e.currentTarget.style.borderColor = 'var(--primary)';
+            }}
+            onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+            }}
         >
             <div style={{
                 width: '80px',
                 height: '80px',
-                borderRadius: '50%',
-                background: `${color}20`, // 20% opacity using hex
+                borderRadius: '24px',
+                background: `${color}15`,
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -36,49 +48,87 @@ const RoleSelection = () => {
             }}>
                 <Icon size={40} />
             </div>
-            <h3 style={{ color: '#333' }}>{title}</h3>
+            <h3 style={{ color: 'var(--text-main)', fontSize: '1.4rem', fontWeight: 700 }}>{title}</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', textAlign: 'center' }}>
+                Join the Syncare community as a {title.toLowerCase()}.
+            </p>
         </div>
     );
 
     return (
         <div style={{
+            position: 'relative',
             width: '100vw',
             height: '100vh',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            background: '#E7DDDD',
-            fontFamily: 'var(--font-family)',
-            gap: '40px'
+            overflow: 'hidden',
+            gap: '50px',
+            padding: '20px'
         }}>
 
-            <div style={{ textAlign: 'center' }}>
-                <h1 style={{ color: '#333', marginBottom: '10px' }}>Who are you?</h1>
-                <p style={{ color: '#666' }}>Please select your role to continue</p>
+
+            <div style={{ textAlign: 'center', zIndex: 10 }}>
+                <h1 style={{
+                    fontSize: '4rem',
+                    fontWeight: 900,
+                    color: 'var(--primary)',
+                    marginBottom: '20px'
+                }}>Who are you?</h1>
+                <p style={{
+                    fontSize: '1.5rem',
+                    color: 'var(--text-muted)',
+                    maxWidth: '600px',
+                    margin: '0 auto',
+                    fontWeight: 500
+                }}>Tailoring the Syncare experience to your specific needs.</p>
             </div>
 
-            <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div style={{
+                display: 'flex',
+                gap: '30px',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                width: '100%',
+                maxWidth: '1000px',
+                zIndex: 10
+            }}>
                 <RoleCard
                     title="Doctor"
                     icon={Stethoscope}
                     path="/signup?role=Doctor"
-                    color="#C1AE8F" // Using the doctor theme color
+                    color="#3A5A78"
                 />
                 <RoleCard
                     title="Patient"
                     icon={User}
                     path="/signup?role=Patient"
-                    color="#84DCC6"
+                    color="#507090"
                 />
                 <RoleCard
-                    title="Family Member"
+                    title="Family"
                     icon={Heart}
                     path="/signup?role=Family"
-                    color="#FF9F9F"
+                    color="#A68D6A"
                 />
             </div>
 
+            <button
+                onClick={() => navigate('/')}
+                style={{
+                    position: 'absolute',
+                    top: '40px',
+                    left: '40px',
+                    color: 'var(--primary)',
+                    background: 'transparent',
+                    fontWeight: 600,
+                    zIndex: 20
+                }}
+            >
+                ← Back to Home
+            </button>
         </div>
     );
 };
