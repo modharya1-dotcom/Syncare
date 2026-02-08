@@ -48,11 +48,11 @@ const PatientDashboard = () => {
             return "I've noted that you're in pain. I am informing Dr. Smith immediately so they can check on your medication. Can you tell me exactly where it hurts?";
         }
 
-        if (query.includes('hello') || query.includes('hi')) return "Hello! I am your Syncare assistant. It's wonderful to hear your voice. How are you feeling in this moment?";
+        if (query.includes('hello') || query.includes('hi')) return "Hello! I am your SynCare assistant. It's wonderful to hear your voice. How are you feeling in this moment?";
 
         if (query.includes('time')) return `Of course. It is currently ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}. You're doing great today.`;
 
-        if (query.includes('who are you')) return "I am Syncare, your personal digital companion. My only job is to keep you safe, healthy, and connected to the people who love you.";
+        if (query.includes('who are you')) return "I am SynCare, your personal digital companion. My only job is to keep you safe, healthy, and connected to the people who love you.";
 
         if (query.includes('thank')) return "You are so welcome. It is my pleasure to assist you.";
 
@@ -115,7 +115,7 @@ const PatientDashboard = () => {
                     <div style={{ width: '32px', height: '32px', background: 'var(--primary)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Heart size={18} color="white" fill="white" />
                     </div>
-                    <h2 style={{ color: 'var(--primary)', margin: 0, fontSize: '1.3rem' }}>Syncare Assistant</h2>
+                    <h2 style={{ color: 'var(--primary)', margin: 0, fontSize: '1.3rem' }}>SynCare Assistant</h2>
                 </div>
 
                 <div style={{ display: 'flex', gap: '15px' }}>
