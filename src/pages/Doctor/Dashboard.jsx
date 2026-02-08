@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { User, Users, Calendar, Mic, Activity, LogOut, Home as HomeIcon, CheckCircle, XCircle, Settings, Edit3 } from 'lucide-react';
+import { User, Users, Calendar, Mic, Activity, LogOut, Home as HomeIcon, CheckCircle, XCircle, Settings, Edit3, Heart, Shield, Bell, ArrowLeft, Save, Phone, Briefcase } from 'lucide-react';
 import PatientList from './PatientList';
 import Appointments from './Appointments';
-import AIMode from './AIMode';
 
 const DoctorDashboard = () => {
     const navigate = useNavigate();
@@ -18,6 +17,8 @@ const DoctorDashboard = () => {
     });
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [showNotifPanel, setShowNotifPanel] = useState(false);
 
     useEffect(() => {
         const session = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -34,284 +35,260 @@ const DoctorDashboard = () => {
         }));
     }, []);
 
+    // SOS Notification Polling
+    useEffect(() => {
+        const checkSOS = () => {
+            const signal = JSON.parse(localStorage.getItem('sos_signal') || '{"active": false}');
+            if (signal.active) {
+                const notifId = `sos-${signal.timestamp}`;
+                setNotifications(prev => {
+                    if (prev.find(n => n.id === notifId)) return prev;
+                    return [{
+                        id: notifId,
+                        type: 'SOS',
+                        message: `URGENCY: ${signal.patient} has triggered an SOS signal!`,
+                        time: new Date(signal.timestamp).toLocaleTimeString()
+                    }, ...prev];
+                });
+            }
+        };
+        const interval = setInterval(checkSOS, 2000);
+        return () => clearInterval(interval);
+    }, []);
+
     const updateDoctorData = (newData) => {
         setDoctorData(newData);
-        // Persist to users list for Family dashboard access
         const users = JSON.parse(localStorage.getItem('users') || '{}');
         if (newData.email && users[newData.email]) {
             users[newData.email] = { ...users[newData.email], ...newData };
             localStorage.setItem('users', JSON.stringify(users));
         }
-        // Update session name if it changed
         const session = JSON.parse(localStorage.getItem('currentUser') || '{}');
         session.name = newData.name;
         localStorage.setItem('currentUser', JSON.stringify(session));
     };
 
-    const WelcomeHome = () => (
-        <div style={{
-            height: '100%',
+    const handleLogout = () => {
+        localStorage.removeItem('currentUser');
+        navigate('/');
+    };
+
+    const Sidebar = () => (
+        <aside className="glass-nav" style={{
+            width: '100px',
+            height: 'calc(100vh - 40px)',
+            margin: '20px',
+            borderRadius: '30px',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
             alignItems: 'center',
-            color: '#fff',
-            textAlign: 'center',
-            padding: '20px'
+            padding: '40px 0',
+            gap: '35px',
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            zIndex: 1000,
+            boxShadow: 'var(--shadow-lg)'
         }}>
-            {/* Large Profile Photo */}
-            <div style={{
-                width: '180px',
-                height: '180px',
-                borderRadius: '50%',
-                background: '#fff',
-                marginBottom: '25px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-                overflow: 'hidden',
-                border: '5px solid rgba(255,255,255,0.3)'
-            }}>
-                <User size={100} color="#C1AE8F" />
+            <div onClick={() => navigate('/')} style={{ cursor: 'pointer', background: 'var(--primary)', padding: '12px', borderRadius: '15px' }}>
+                <Heart size={24} color="white" fill="white" />
             </div>
 
-            <h1 style={{ fontSize: '3.5rem', marginBottom: '40px', fontWeight: 'bold' }}>Welcome Dr. {doctorData.name.split(' ').pop()}</h1>
-
-            {/* Clickable Box to Open Features */}
-            <div
-                onClick={() => navigate('/doctor/hub')}
-                style={{
-                    width: '100%',
-                    maxWidth: '400px',
-                    height: '150px',
-                    background: 'rgba(255,255,255,0.15)',
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: '25px',
-                    border: '2px solid rgba(255,255,255,0.2)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
-                }}
-                onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-10px)';
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
-                }}
-                onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
-                }}
-            >
-                <div style={{ display: 'flex', gap: '20px', marginBottom: '10px' }}>
-                    <Users color="#fff" size={30} />
-                    <Calendar color="#fff" size={30} />
-                    <Mic color="#fff" size={30} />
-                </div>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 'normal' }}>Open Dashboard Hub</h3>
-                <p style={{ margin: '5px 0 0', opacity: 0.7, fontSize: '0.9rem' }}>Patients • Appointments • AI Insights</p>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '30px', alignItems: 'center' }}>
+                <SidebarItem icon={HomeIcon} title="Home" active={location.pathname === '/doctor' || location.pathname === '/doctor/'} onClick={() => navigate('/doctor')} />
+                <SidebarItem icon={Users} title="Registry" active={location.pathname.includes('dashboard')} onClick={() => navigate('/doctor/dashboard')} />
+                <SidebarItem icon={Calendar} title="Calendar" active={location.pathname.includes('appointments')} onClick={() => navigate('/doctor/appointments')} />
             </div>
-        </div>
+
+            <SidebarItem icon={LogOut} title="Logout" onClick={handleLogout} />
+        </aside>
     );
 
-    const HubPage = () => (
-        <div style={{ padding: '20px' }}>
-            <h2 style={{ color: '#fff', marginBottom: '30px' }}>Dashboard Hub</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
-                <HubCard
-                    title="My Patients"
-                    icon={Users}
-                    desc="Manage patient profiles and health records"
-                    onClick={() => navigate('/doctor/dashboard')}
-                />
-                <HubCard
-                    title="Appointments"
-                    icon={Calendar}
-                    desc="View and schedule patient consultations"
-                    onClick={() => navigate('/doctor/appointments')}
-                />
-                <HubCard
-                    title="AI Insights"
-                    icon={Mic}
-                    desc="Analyze voice data and patient behavior"
-                    onClick={() => navigate('/doctor/ai-mode')}
-                    highlight
-                />
-            </div>
-        </div>
-    );
-
-    const HubCard = ({ title, icon: Icon, desc, onClick, highlight }) => (
+    const SidebarItem = ({ icon: Icon, active, onClick, title }) => (
         <div
             onClick={onClick}
+            title={title}
             style={{
-                background: '#fff',
-                padding: '30px',
-                borderRadius: '25px',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+                color: active ? 'var(--primary)' : 'var(--text-muted)',
+                transition: 'var(--transition)',
+                padding: '12px',
+                borderRadius: '16px',
+                background: active ? 'rgba(58, 90, 120, 0.08)' : 'transparent',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '15px',
-                border: highlight ? '2px solid #84DCC6' : 'none'
+                alignItems: 'center',
+                justifyContent: 'center'
             }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
         >
-            <div style={{ width: '60px', height: '60px', borderRadius: '15px', background: highlight ? '#84DCC6' : '#f5f5f5', display: 'flex', justifyContent: 'center', alignItems: 'center', color: highlight ? '#fff' : '#C1AE8F' }}>
-                <Icon size={30} />
-            </div>
-            <div>
-                <h3 style={{ margin: 0, color: '#333' }}>{title}</h3>
-                <p style={{ margin: '5px 0 0', color: '#666', fontSize: '0.9rem' }}>{desc}</p>
-            </div>
+            <Icon size={24} strokeWidth={active ? 2.5 : 2} />
         </div>
     );
 
-    const ProfileIcon = () => (
-        <div
-            onClick={() => setShowProfileModal(true)}
-            style={{
-                position: 'absolute',
-                top: '20px',
-                left: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                background: 'rgba(255,255,255,0.9)',
-                padding: '8px 15px',
-                borderRadius: '30px',
-                boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-                cursor: 'pointer',
-                zIndex: 100,
-                border: '1px solid #eee'
-            }}
-        >
-            <div style={{ width: '35px', height: '35px', borderRadius: '50%', background: '#C1AE8F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <User size={18} color="#fff" />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#333' }}>Dr. {doctorData.name.split(' ').pop()}</span>
-                <span style={{ fontSize: '0.7rem', color: doctorData.status === 'Available' ? 'green' : 'red', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    {doctorData.status === 'Available' ? <CheckCircle size={10} /> : <XCircle size={10} />}
-                    {doctorData.status}
-                </span>
+    const WelcomeHome = () => (
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <div className="animate-fade-in" style={{ maxWidth: '1200px', width: '100%' }}>
+                <div style={{ marginBottom: '40px' }}>
+                    <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--primary)', margin: 0 }}>Welcome back,</h1>
+                    <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: 0, opacity: 0.8 }}>Dr. {doctorData.name}</h2>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', marginTop: '10px', fontWeight: 500 }}>Global Patient Review: 8 active cases.</p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '25px' }}>
+                    <div className="premium-card" style={{ padding: '30px', background: 'var(--primary)', color: 'white' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                            <Activity color="white" size={28} />
+                        </div>
+                        <h3 style={{ color: 'white', marginBottom: '10px', fontSize: '1.4rem' }}>Registry Access</h3>
+                        <p style={{ opacity: 0.9, marginBottom: '25px', fontSize: '1rem' }}>Enter patient dossiers for specific AI insights and behavior analysis.</p>
+                        <button onClick={() => navigate('/doctor/dashboard')} className="btn" style={{ background: 'white', color: 'var(--primary)', width: '100%', padding: '12px', fontWeight: 800 }}>Enter Registry</button>
+                    </div>
+
+                    <div className="premium-card" style={{ padding: '30px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                            <Calendar color="var(--primary)" size={28} />
+                        </div>
+                        <h3 style={{ fontSize: '1.4rem', marginBottom: '10px' }}>Schedule</h3>
+                        <p style={{ color: 'var(--text-muted)', marginBottom: '25px', fontSize: '1rem' }}>Review appointments and clinical syncs for the week.</p>
+                        <button onClick={() => navigate('/doctor/appointments')} className="btn btn-outline" style={{ width: '100%', padding: '12px', fontWeight: 800 }}>View Calendar</button>
+                    </div>
+                </div>
             </div>
         </div>
     );
 
     return (
-        <div style={{ height: '100vh', width: '100vw', display: 'flex', background: '#C1AE8F', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100vh', background: 'var(--bg-primary)', display: 'flex', overflow: 'hidden' }}>
+            <Sidebar />
 
-            {/* Top Left Profile Icon */}
-            <ProfileIcon />
+            <div style={{ flex: 1, paddingLeft: '140px', paddingTop: '30px', paddingRight: '40px', position: 'relative', zIndex: 10, overflowY: 'auto' }}>
+                <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                        <button onClick={() => navigate(-1)} className="btn btn-icon" title="Go Back">
+                            <ArrowLeft size={20} />
+                        </button>
+                    </div>
 
-            {/* Logout Button (Top Right) */}
-            <button
-                onClick={() => { localStorage.removeItem('currentUser'); navigate('/'); }}
-                style={{
-                    position: 'absolute', top: '20px', right: '20px',
-                    background: 'rgba(255,255,255,0.9)', border: 'none', padding: '8px 15px', borderRadius: '20px',
-                    display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', zIndex: 100
-                }}
-            >
-                <LogOut size={16} color="#666" />
-                <span style={{ fontSize: '0.85rem' }}>Logout</span>
-            </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                        <div
+                            className="glass-nav"
+                            style={{
+                                padding: '10px',
+                                borderRadius: '14px',
+                                position: 'relative',
+                                cursor: 'pointer',
+                                background: showNotifPanel ? 'var(--primary)' : 'white',
+                                color: showNotifPanel ? 'white' : 'var(--primary)'
+                            }}
+                            onClick={() => setShowNotifPanel(!showNotifPanel)}
+                        >
+                            <Bell size={20} />
+                            {notifications.length > 0 && <div style={{ position: 'absolute', top: '8px', right: '8px', width: '8px', height: '8px', background: 'var(--danger)', borderRadius: '50%', border: '2px solid white' }}></div>}
 
-            {/* Sidebar (Hide on Welcome/Hub screens) */}
-            {location.pathname !== '/doctor' && location.pathname !== '/doctor/' && location.pathname !== '/doctor/hub' && (
-                <div style={{
-                    width: '80px',
-                    background: 'rgba(255,255,255,0.9)',
-                    backdropFilter: 'blur(10px)',
-                    margin: '80px 0 20px 20px',
-                    borderRadius: '20px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    padding: '20px 0',
-                    gap: '20px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                    zIndex: 20
-                }}>
-                    <div onClick={() => navigate('/doctor')} style={{ cursor: 'pointer', color: '#666' }} title="Home"><HomeIcon size={24} /></div>
-                    <div onClick={() => navigate('/doctor/hub')} style={{ cursor: 'pointer', color: '#666' }} title="Hub"><Settings size={24} /></div>
-                    <div style={{ width: '30px', height: '1px', background: '#ddd' }}></div>
-                    <div onClick={() => navigate('/doctor/dashboard')} style={{ cursor: 'pointer', color: location.pathname.includes('dashboard') ? '#84DCC6' : '#666' }} title="Patients"><Users size={24} /></div>
-                    <div onClick={() => navigate('/doctor/appointments')} style={{ cursor: 'pointer', color: location.pathname.includes('appointments') ? '#84DCC6' : '#666' }} title="Calendar"><Calendar size={24} /></div>
-                    <div onClick={() => navigate('/doctor/ai-mode')} style={{ cursor: 'pointer', color: location.pathname.includes('ai-mode') ? '#84DCC6' : '#666' }} title="AI"><Mic size={24} /></div>
-                </div>
-            )}
+                            {showNotifPanel && (
+                                <div className="premium-card" style={{ position: 'absolute', top: '55px', right: '0', width: '300px', padding: '15px', zIndex: 3000, boxShadow: 'var(--shadow-lg)' }}>
+                                    <h4 style={{ margin: '0 0 15px', display: 'flex', justifyContent: 'space-between' }}>
+                                        Notifications
+                                        <XCircle size={18} style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setShowNotifPanel(false); }} />
+                                    </h4>
+                                    {notifications.length === 0 ? (
+                                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>No new alerts.</p>
+                                    ) : (
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                            {notifications.map(n => (
+                                                <div key={n.id} style={{ background: 'rgba(211, 47, 47, 0.05)', padding: '10px', borderRadius: '12px', border: '1px solid rgba(211,47,47,0.1)' }}>
+                                                    <div style={{ fontWeight: 800, fontSize: '0.75rem', color: 'var(--danger)' }}>{n.type} ALERT</div>
+                                                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>{n.message}</div>
+                                                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>{n.time}</div>
+                                                </div>
+                                            ))}
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setNotifications([]); }}
+                                                style={{ width: '100%', border: 'none', background: 'none', color: 'var(--primary)', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', marginTop: '5px' }}
+                                            >
+                                                Clear All
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
 
-            {/* Main Content Area */}
-            <div style={{ flex: 1, padding: '80px 40px 40px', overflowY: 'auto' }}>
+                        <div onClick={() => { setShowProfileModal(true); setIsEditing(false); }} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            background: 'white',
+                            padding: '8px 18px',
+                            borderRadius: '20px',
+                            cursor: 'pointer',
+                            boxShadow: 'var(--shadow-sm)',
+                            border: '1px solid rgba(0,0,0,0.05)'
+                        }}>
+                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                                {doctorData.name.charAt(0)}
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>Dr. {doctorData.name}</span>
+                                <span style={{ fontSize: '0.7rem', color: 'var(--success)', fontWeight: 700 }}>{doctorData.status}</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
                 <Routes>
                     <Route path="/" element={<WelcomeHome />} />
-                    <Route path="hub" element={<HubPage />} />
                     <Route path="dashboard" element={<PatientList />} />
                     <Route path="appointments" element={<Appointments />} />
-                    <Route path="ai-mode" element={<AIMode />} />
                 </Routes>
             </div>
 
-            {/* Profile Detail Modal */}
+            {/* Editable Profile Modal */}
             {showProfileModal && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, backdropFilter: 'blur(5px)' }}>
-                    <div style={{ background: '#fff', width: '450px', borderRadius: '30px', padding: '40px', position: 'relative' }}>
-                        <button onClick={() => { setShowProfileModal(false); setIsEditing(false); }} style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', cursor: 'pointer' }}><XCircle size={24} color="#ccc" /></button>
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, backdropFilter: 'blur(10px)' }}>
+                    <div className="animate-fade-in premium-card" style={{ width: '450px', padding: '35px', position: 'relative' }}>
+                        <button onClick={() => setShowProfileModal(false)} style={{ position: 'absolute', top: '25px', right: '25px', background: 'none', border: 'none', cursor: 'pointer' }}>
+                            <XCircle size={28} color="#CCC" />
+                        </button>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
-                            <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#f5f5f5', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '3px solid #C1AE8F' }}>
-                                <User size={50} color="#C1AE8F" />
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+                            <div style={{ width: '80px', height: '80px', borderRadius: '24px', background: 'var(--secondary)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <User size={40} color="var(--primary)" />
                             </div>
-                            <h2 style={{ margin: 0 }}>Dr. {doctorData.name}</h2>
-                            <span style={{ fontSize: '0.9rem', color: '#666' }}>{doctorData.specialization}</span>
 
-                            <div style={{ width: '100%', marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                {['name', 'specialization', 'phone', 'email'].map(field => (
-                                    <div key={field} style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                        <label style={{ fontSize: '0.75rem', color: '#999', textTransform: 'capitalize' }}>{field}</label>
-                                        {isEditing ? (
-                                            <input
-                                                value={doctorData[field]}
-                                                onChange={(e) => setDoctorData({ ...doctorData, [field]: e.target.value })}
-                                                style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #ddd' }}
-                                            />
-                                        ) : (
-                                            <span style={{ fontSize: '0.95rem', fontWeight: '500' }}>{doctorData[field] || 'Not set'}</span>
-                                        )}
+                            {isEditing ? (
+                                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                    <h3 style={{ margin: '0 0 10px', textAlign: 'center' }}>Edit Profile</h3>
+                                    <EditInput label="Name" value={doctorData.name} onChange={(v) => setDoctorData({ ...doctorData, name: v })} />
+                                    <EditInput label="Specialization" value={doctorData.specialization} onChange={(v) => setDoctorData({ ...doctorData, specialization: v })} />
+                                    <EditInput label="Phone" value={doctorData.phone} onChange={(v) => setDoctorData({ ...doctorData, phone: v })} />
+                                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                                        <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => { updateDoctorData(doctorData); setIsEditing(false); }}>
+                                            <Save size={18} /> Save Changes
+                                        </button>
+                                        <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setIsEditing(false)}>Cancel</button>
                                     </div>
-                                ))}
-
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f9f9f9', padding: '15px', borderRadius: '15px', marginTop: '10px' }}>
-                                    <div>
-                                        <div style={{ fontSize: '0.75rem', color: '#999' }}>Availability Status</div>
-                                        <div style={{ fontSize: '0.95rem', fontWeight: 'bold', color: doctorData.status === 'Available' ? 'green' : 'red' }}>{doctorData.status}</div>
-                                    </div>
-                                    <button
-                                        onClick={() => updateDoctorData({ ...doctorData, status: doctorData.status === 'Available' ? 'Not Available' : 'Available' })}
-                                        style={{ padding: '8px 15px', borderRadius: '20px', border: 'none', background: doctorData.status === 'Available' ? '#ff6b6b' : '#84DCC6', color: '#fff', cursor: 'pointer', fontSize: '0.8rem' }}
-                                    >
-                                        Set {doctorData.status === 'Available' ? 'Busy' : 'Available'}
-                                    </button>
                                 </div>
-                            </div>
-
-                            <button
-                                onClick={() => {
-                                    if (isEditing) updateDoctorData(doctorData);
-                                    setIsEditing(!isEditing);
-                                }}
-                                style={{ width: '100%', marginTop: '20px', padding: '12px', borderRadius: '15px', border: 'none', background: '#333', color: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
-                            >
-                                {isEditing ? <CheckCircle size={18} /> : <Edit3 size={18} />}
-                                {isEditing ? 'Save Profile' : 'Edit Profile'}
-                            </button>
+                            ) : (
+                                <>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <h2 style={{ margin: 0, color: 'var(--primary)', fontSize: '1.6rem' }}>Dr. {doctorData.name}</h2>
+                                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '5px' }}>{doctorData.specialization}</p>
+                                    </div>
+                                    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                        <div style={{ borderBottom: '1px solid #F0F0F0', paddingBottom: '10px' }}>
+                                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>PHONE</div>
+                                            <div style={{ fontWeight: 600 }}>{doctorData.phone}</div>
+                                        </div>
+                                        <div style={{ borderBottom: '1px solid #F0F0F0', paddingBottom: '10px' }}>
+                                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>EMAIL</div>
+                                            <div style={{ fontWeight: 600 }}>{doctorData.email}</div>
+                                        </div>
+                                        <button className="btn btn-outline" style={{ width: '100%' }} onClick={() => setIsEditing(true)}>
+                                            <Edit3 size={18} /> Edit Profile Info
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -319,5 +296,17 @@ const DoctorDashboard = () => {
         </div>
     );
 };
+
+const EditInput = ({ label, value, onChange }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+        <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)' }}>{label}</label>
+        <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            style={{ padding: '12px', borderRadius: '12px', border: '1px solid #DDD', outline: 'none', width: '100%' }}
+        />
+    </div>
+);
 
 export default DoctorDashboard;
