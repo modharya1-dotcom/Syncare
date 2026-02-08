@@ -42,7 +42,7 @@ const LandingPage = () => {
                     <div style={{ width: '32px', height: '32px', background: 'var(--primary)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Heart size={18} color="white" fill="white" />
                     </div>
-                    <h2 style={{ color: 'var(--primary)', margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Syncare</h2>
+                    <h2 style={{ color: 'var(--primary)', margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>SynCare</h2>
                 </div>
 
                 <div style={{ display: 'flex', gap: '12px' }}>
@@ -63,21 +63,6 @@ const LandingPage = () => {
                 zIndex: 10
             }}>
                 <div className="animate-fade-in" style={{ maxWidth: '900px', padding: '0 20px' }}>
-                    <div style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '8px 16px',
-                        background: 'rgba(58, 90, 120, 0.08)',
-                        borderRadius: '100px',
-                        color: 'var(--primary)',
-                        fontSize: '0.9rem',
-                        fontWeight: 600,
-                        marginBottom: '30px'
-                    }}>
-                        <Shield size={16} />
-                        HIPAA Compliant & Secure Care Monitoring
-                    </div>
 
                     <h1 style={{
                         fontSize: 'clamp(3rem, 10vw, 5.5rem)',
@@ -120,7 +105,7 @@ const LandingPage = () => {
                 <div style={{ textAlign: 'center', marginBottom: '80px' }}>
                     <h2 style={{ fontSize: '2.5rem', color: 'var(--primary)' }}>Integrated Care Ecosystem</h2>
                     <p style={{ color: 'var(--text-muted)', maxWidth: '600px', margin: '20px auto' }}>
-                        Syncare provides a unified platform for every stakeholder in the care journey.
+                        SynCare provides a unified platform for every stakeholder in the care journey.
                     </p>
                 </div>
 
@@ -169,7 +154,7 @@ const LandingPage = () => {
                             <div style={{ width: '28px', height: '28px', background: 'var(--primary)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <Heart size={16} color="white" fill="white" />
                             </div>
-                            <h3 style={{ margin: 0, color: 'var(--primary)' }}>Syncare</h3>
+                            <h3 style={{ margin: 0, color: 'var(--primary)' }}>SynCare</h3>
                         </div>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                             Providing dignity and precision to Alzheimer's care through innovative AI solutions.
@@ -214,7 +199,7 @@ const LandingPage = () => {
                     fontSize: '0.85rem',
                     color: '#AAA'
                 }}>
-                    <div>© 2024 Syncare Health. All rights reserved.</div>
+                    <div>© 2024 SynCare Health. All rights reserved.</div>
                     <div style={{ display: 'flex', gap: '20px' }}>
                         <span>Privacy Policy</span>
                         <span>Terms of Service</span>
