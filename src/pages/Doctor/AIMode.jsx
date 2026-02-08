@@ -6,7 +6,7 @@ const AIMode = () => {
     const { text, isListening, startListening, stopListening } = useSpeechRecognition();
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState([
-        { role: 'ai', content: "Hello Dr. Smith. I've analyzed the telemetry from John Doe's Syncare Watch and the behavior logs from the family hub. How can I assist you with clinical insights today?" }
+        { role: 'ai', content: "Hello Dr. Smith. I've analyzed the telemetry from John Doe's SynCare Watch and the behavior logs from the family hub. How can I assist you with clinical insights today?" }
     ]);
     const [isThinking, setIsThinking] = useState(false);
     const chatEndRef = useRef(null);
@@ -51,7 +51,7 @@ const AIMode = () => {
             return "His sleep quality has dropped by 15% this week. We're seeing more frequent awakening events. This might correlate with the mild agitation noted in the evening logs.";
         }
         if (query.includes('medication') || query.includes('pills')) {
-            return "Medication compliance is at 100%. The Syncare Watch confirmed heart rate stability post-administration of his morning dosage.";
+            return "Medication compliance is at 100%. The SynCare Watch confirmed heart rate stability post-administration of his morning dosage.";
         }
         if (query.includes('confusion') || query.includes('confused')) {
             return "There was a notable episode of confusion yesterday at 10:15 AM regarding his location. It lasted 12 minutes before he was redirected by his spouse. Cognitive score for the session was 14/30.";
