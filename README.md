@@ -1,1 +1,1 @@
-# Syncare
+# SynCare
